@@ -1,1 +1,220 @@
-code
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NorthSky Auction Dashboard</title>
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#0b1220;
+  color:white;
+}
+
+.header{
+  padding:20px;
+  border-bottom:1px solid rgba(255,255,255,0.1);
+  display:flex;
+  justify-content:space-between;
+}
+
+.container{
+  max-width:900px;
+  margin:auto;
+  padding:20px;
+}
+
+.card{
+  background:#111827;
+  padding:15px;
+  border-radius:12px;
+  margin-top:15px;
+  border:1px solid rgba(255,255,255,0.08);
+}
+
+input, button{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:8px;
+  border:none;
+}
+
+input{
+  background:#1f2937;
+  color:white;
+}
+
+button{
+  background:#22c55e;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.bid-box{
+  display:flex;
+  gap:10px;
+}
+
+.bid-box input{
+  flex:1;
+}
+
+.bid-box button{
+  width:150px;
+}
+
+.badge{
+  display:inline-block;
+  padding:5px 10px;
+  background:#38bdf8;
+  color:black;
+  border-radius:999px;
+  font-size:12px;
+}
+
+.highest{
+  color:#22c55e;
+  font-size:18px;
+  font-weight:bold;
+}
+
+.timer{
+  color:#f59e0b;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div>🚀 NorthSky Contractor Dashboard</div>
+  <div id="status">Disconnected</div>
+</div>
+
+<div class="container">
+
+  <!-- LOGIN / CITY -->
+  <div class="card">
+    <h3>Join Auction City</h3>
+
+    <input id="contractorId" placeholder="Contractor ID"/>
+    <input id="city" placeholder="City (Calgary, Edmonton...)"/>
+
+    <button onclick="connect()">Join Live Market</button>
+  </div>
+
+  <!-- AUCTION PANEL -->
+  <div class="card">
+    <h3>Live Auction</h3>
+
+    <div>Lead ID: <span id="leadId">None</span></div>
+    <div>Highest Bid: <span class="highest" id="highestBid">$0</span></div>
+    <div class="timer">Time Left: <span id="timer">--</span></div>
+    <div id="winner"></div>
+
+    <div class="bid-box">
+      <input id="bidAmount" placeholder="Enter bid ($)" />
+      <button onclick="placeBid()">Bid</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let socket;
+let currentCity = null;
+let contractorId = null;
+let activeLeadId = null;
+let expiresAt = null;
+
+/* ================= CONNECT ================= */
+function connect(){
+
+  contractorId = document.getElementById("contractorId").value;
+  currentCity = document.getElementById("city").value;
+
+  if(!contractorId || !currentCity){
+    alert("Enter contractor + city");
+    return;
+  }
+
+  socket = io("http://localhost:3000");
+
+  socket.on("connect", () => {
+    document.getElementById("status").innerText = "Connected";
+
+    socket.emit("join_city", currentCity);
+  });
+
+  /* NEW AUCTION */
+  socket.on("auction_started", (data) => {
+    activeLeadId = data.leadId;
+    expiresAt = data.expiresAt;
+
+    document.getElementById("leadId").innerText = activeLeadId;
+    document.getElementById("winner").innerText = "";
+  });
+
+  /* NEW BID UPDATE */
+  socket.on("new_bid", (data) => {
+    document.getElementById("highestBid").innerText = "$" + data.highestBid;
+  });
+
+  /* AUCTION CLOSED */
+  socket.on("auction_closed", (data) => {
+
+    if(data.winnerId === contractorId){
+      document.getElementById("winner").innerHTML =
+        "🏆 YOU WON THIS LEAD ($" + data.price + ")";
+    } else {
+      document.getElementById("winner").innerHTML =
+        "❌ Auction closed. Winner: " + data.winnerId;
+    }
+  });
+
+  startTimer();
+}
+
+/* ================= BID ================= */
+function placeBid(){
+
+  const amount = parseFloat(document.getElementById("bidAmount").value);
+
+  if(!amount || !activeLeadId){
+    alert("Invalid bid");
+    return;
+  }
+
+  socket.emit("bid", {
+    leadId: activeLeadId,
+    contractorId,
+    amount
+  });
+}
+
+/* ================= TIMER ================= */
+function startTimer(){
+  setInterval(() => {
+    if(!expiresAt) return;
+
+    const diff = expiresAt - Date.now();
+
+    if(diff <= 0){
+      document.getElementById("timer").innerText = "CLOSED";
+      return;
+    }
+
+    const seconds = Math.floor(diff / 1000);
+    document.getElementById("timer").innerText = seconds + "s";
+
+  }, 1000);
+}
+</script>
+
+</body>
+</html>
