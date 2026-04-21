@@ -4,7 +4,7 @@ import http from "http";
 import { Server } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
 import path from "path";
-import { fileURLToUrl } from "url";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,11 +18,9 @@ const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
 
 // ---------- In‑Memory Data Stores ----------
-const leads = [];        // { id, name, contact, postalCode, service, city, status, createdAt, highestBid, winner }
+const leads = [];        // { id, name, contact, postalCode, service, city, status, createdAt, highestBid, winner, forSale, salePrice, soldTo, soldAt }
 const bids = [];         // { id, leadId, contractorId, amount, timestamp }
 const contractors = new Map(); // socketId -> { id, city, status, lastSeen }
-
-// Active auctions (same as original but now also references leads)
 const auctions = new Map(); // leadId -> { city, status, highestBid, winner, bids, expiresAt }
 
 // Helper: update lead record with latest auction data
@@ -47,10 +45,8 @@ function startAuction(leadId, city) {
     bids: [],
     expiresAt: Date.now() + durationMs,
   });
-  // Update lead status
   const lead = leads.find(l => l.id === leadId);
   if (lead) lead.status = "active";
-
   io.to(city).emit("auction_started", { leadId, expiresAt: Date.now() + durationMs });
   setTimeout(() => closeAuction(leadId), durationMs);
 }
@@ -68,10 +64,16 @@ function closeAuction(leadId) {
   setTimeout(() => auctions.delete(leadId), 60000);
 }
 
-// ---------- REST Endpoints for Admin ----------
-// Get all leads
+// ---------- REST Endpoints ----------
+// Get all leads (admin)
 app.get("/api/leads", (req, res) => {
   res.json(leads);
+});
+
+// Get leads that are for sale (public for contractors)
+app.get("/api/leads/for-sale", (req, res) => {
+  const forSaleLeads = leads.filter(l => l.forSale === true && !l.soldTo);
+  res.json(forSaleLeads);
 });
 
 // Get all bids
@@ -79,13 +81,13 @@ app.get("/api/bids", (req, res) => {
   res.json(bids);
 });
 
-// Get online contractors (convert Map to array)
+// Get online contractors
 app.get("/api/contractors", (req, res) => {
   const online = Array.from(contractors.values()).filter(c => c.status === "online");
   res.json(online);
 });
 
-// Create a new lead (same as original /lead but stores full lead info)
+// Create a new lead (also starts auction)
 app.post("/api/leads", (req, res) => {
   const { name, contact, postalCode, service = "roof inspection", city = "unknown" } = req.body;
   if (!name || !contact || !postalCode) {
@@ -103,13 +105,82 @@ app.post("/api/leads", (req, res) => {
     createdAt: new Date().toISOString(),
     highestBid: 0,
     winner: null,
+    forSale: false,
+    salePrice: null,
+    soldTo: null,
+    soldAt: null,
   };
   leads.unshift(newLead);
   startAuction(leadId, city);
   res.json({ success: true, leadId });
 });
 
-// Force close an auction (admin only)
+// Mark a lead as for sale (or remove from sale)
+app.post("/api/leads/:id/set-for-sale", (req, res) => {
+  const { id } = req.params;
+  const { forSale, price } = req.body;
+  const lead = leads.find(l => l.id === id);
+  if (!lead) {
+    return res.status(404).json({ success: false, error: "Lead not found" });
+  }
+  if (forSale === true) {
+    if (!price || price <= 0) {
+      return res.status(400).json({ success: false, error: "Valid price required" });
+    }
+    lead.forSale = true;
+    lead.salePrice = price;
+  } else {
+    lead.forSale = false;
+    lead.salePrice = null;
+  }
+  res.json({ success: true, lead });
+});
+
+// Purchase a lead (contractor buys instantly)
+app.post("/api/leads/:id/purchase", (req, res) => {
+  const { id } = req.params;
+  const { contractorId, paymentMethod } = req.body; // paymentMethod can be "stripe" or "mock"
+  const lead = leads.find(l => l.id === id);
+  if (!lead) {
+    return res.status(404).json({ success: false, error: "Lead not found" });
+  }
+  if (!lead.forSale) {
+    return res.status(400).json({ success: false, error: "Lead not available for sale" });
+  }
+  if (lead.soldTo) {
+    return res.status(400).json({ success: false, error: "Lead already sold" });
+  }
+  if (!contractorId) {
+    return res.status(400).json({ success: false, error: "Contractor ID required" });
+  }
+
+  // In a real implementation, you would integrate Stripe here.
+  // For now, we simulate successful payment.
+  // Example Stripe integration would create a PaymentIntent and confirm.
+  
+  // Mark as sold
+  lead.soldTo = contractorId;
+  lead.soldAt = new Date().toISOString();
+  lead.forSale = false; // once sold, remove from store
+  // Optionally close any active auction for this lead
+  if (auctions.has(lead.id)) {
+    closeAuction(lead.id);
+  }
+  // Return lead contact info to buyer
+  res.json({
+    success: true,
+    lead: {
+      id: lead.id,
+      name: lead.name,
+      contact: lead.contact,
+      service: lead.service,
+      postalCode: lead.postalCode,
+      price: lead.salePrice,
+    },
+  });
+});
+
+// Force close an auction (admin)
 app.post("/api/auctions/close/:leadId", (req, res) => {
   const { leadId } = req.params;
   const auction = auctions.get(leadId);
@@ -119,12 +190,11 @@ app.post("/api/auctions/close/:leadId", (req, res) => {
   if (auction.status !== "live") {
     return res.status(400).json({ success: false, error: "Auction already closed" });
   }
-  // Clear the timeout and close immediately
   closeAuction(leadId);
   res.json({ success: true, message: "Auction force closed" });
 });
 
-// Legacy endpoint for contractor dashboard (kept for compatibility)
+// Legacy endpoint for contractor dashboard (compatibility)
 app.post("/lead", (req, res) => {
   const { name, contact, postalCode, service, city } = req.body;
   if (!name || !contact || !postalCode) {
@@ -142,6 +212,10 @@ app.post("/lead", (req, res) => {
     createdAt: new Date().toISOString(),
     highestBid: 0,
     winner: null,
+    forSale: false,
+    salePrice: null,
+    soldTo: null,
+    soldAt: null,
   };
   leads.unshift(newLead);
   startAuction(leadId, newLead.city);
@@ -152,10 +226,9 @@ app.post("/lead", (req, res) => {
 io.on("connection", (socket) => {
   console.log(`Socket connected: ${socket.id}`);
 
-  // Register contractor
   socket.on("join_city", (city) => {
     if (!city) return;
-    const contractorId = socket.id; // use socket id as unique contractor ID
+    const contractorId = socket.id;
     contractors.set(socket.id, {
       id: contractorId,
       city,
@@ -166,7 +239,6 @@ io.on("connection", (socket) => {
     socket.emit("joined", { city, contractorId });
   });
 
-  // Place a bid
   socket.on("bid", ({ leadId, contractorId, amount }) => {
     const auction = auctions.get(leadId);
     if (!auction || auction.status !== "live") {
@@ -177,11 +249,9 @@ io.on("connection", (socket) => {
       socket.emit("bid_error", { message: `Bid must be > $${auction.highestBid}` });
       return;
     }
-    // Record bid
     auction.highestBid = amount;
     auction.winner = contractorId;
     auction.bids.push({ contractorId, amount, timestamp: Date.now() });
-    // Store permanently
     bids.push({
       id: uuidv4(),
       leadId,
@@ -193,19 +263,18 @@ io.on("connection", (socket) => {
     io.to(auction.city).emit("new_bid", { leadId, highestBid: amount, contractorId });
   });
 
-  // Handle disconnect
   socket.on("disconnect", () => {
     console.log(`Socket disconnected: ${socket.id}`);
     contractors.delete(socket.id);
   });
 });
 
-// Serve static pages
+// Serve static pages (admin panel and auction OS)
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html")); // contractor dashboard
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 app.get("/admin", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "admin.html")); // new admin panel
+  res.sendFile(path.join(__dirname, "public", "admin.html"));
 });
 
 const PORT = process.env.PORT || 3000;
