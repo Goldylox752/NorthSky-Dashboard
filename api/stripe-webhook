@@ -12,7 +12,7 @@ const supabase = createClient(
 
 export const config = {
   api: {
-    bodyParser: false, // REQUIRED for Stripe signature verification
+    bodyParser: false,
   },
 };
 
@@ -46,30 +46,44 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 🎯 MAIN EVENT: successful checkout
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
 
       const sessionId = session.id;
-      const email = session.customer_email;
-      const plan = session.metadata?.plan || "basic";
 
-      // Example expiry (30 days access)
+      // ✅ safer email extraction
+      const email =
+        session.customer_details?.email ||
+        session.customer_email ||
+        null;
+
+      // ✅ safer plan extraction (must be set in checkout session metadata)
+      const plan = session.metadata?.plan ?? "basic";
+
+      // 30-day expiry
       const expiresAt = new Date();
       expiresAt.setDate(expiresAt.getDate() + 30);
 
-      // Save access in Supabase
-      const { error } = await supabase.from("verified_sessions").upsert({
-        session_id: sessionId,
-        email: email,
-        plan: plan,
-        expires_at: expiresAt.toISOString(),
-      });
+      // ✅ idempotent upsert (IMPORTANT FIX)
+      const { error } = await supabase
+        .from("verified_sessions")
+        .upsert(
+          {
+            session_id: sessionId,
+            email,
+            plan,
+            expires_at: expiresAt.toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+          {
+            onConflict: "session_id",
+          }
+        );
 
       if (error) {
-        console.error("Supabase insert error:", error.message);
+        console.error("Supabase upsert error:", error.message);
       } else {
-        console.log("Session stored:", sessionId);
+        console.log("Session stored/updated:", sessionId);
       }
     }
 
