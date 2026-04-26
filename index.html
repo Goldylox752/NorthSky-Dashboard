@@ -1,784 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="description" content="NorthSky Revenue OS – unified funnel engine with cross-domain tracking, advanced revenue routing, and military-grade access control." />
-  <title>NorthSky OS · Revenue Intelligence Hub (Secure)</title>
-  
-  <!-- Google Fonts + Font Awesome Icons with SRI for integrity -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  
-  <!-- Strict CSP for top security (limits external scripts and styles) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
-  
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      user-select: none; /* basic anti-tamper, but not intrusive */
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NorthSky OS · Revenue Intelligence System</title>
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background: radial-gradient(ellipse at 30% 20%, #0a0f2a, #01030c);
-      color: #f0f3ff;
-      min-height: 100vh;
-      padding-bottom: 2rem;
-      scroll-behavior: smooth;
-    }
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
 
-    /* grain overlay */
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: radial-gradient(rgba(255,255,255,0.02) 1.2px, transparent 1.2px);
-      background-size: 36px 36px;
-      pointer-events: none;
-      z-index: 0;
-    }
+<style>
+body {
+  margin:0;
+  font-family:Inter;
+  background: radial-gradient(circle at top, #0b1024, #02040e);
+  color:white;
+}
 
-    ::-webkit-scrollbar {
-      width: 5px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #0f142e;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #3b82f6;
-      border-radius: 10px;
-    }
+.container { max-width:1100px; margin:auto; padding:20px; }
 
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 1.8rem;
-      position: relative;
-      z-index: 2;
-    }
+nav {
+  display:flex;
+  justify-content:space-between;
+  padding:18px 0;
+  border-bottom:1px solid #1f2937;
+}
 
-    /* NAVIGATION */
-    .nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 0 0.8rem;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      margin-bottom: 1rem;
-      flex-wrap: wrap;
-    }
-    .logo {
-      font-size: 1.7rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #FFFFFF, #60a5fa);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      letter-spacing: -0.3px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .badge {
-      background: rgba(34,197,94,0.12);
-      border: 1px solid rgba(34,197,94,0.35);
-      padding: 0.4rem 1.2rem;
-      border-radius: 60px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      backdrop-filter: blur(4px);
-    }
-    .badge.hot { background: rgba(239,68,68,0.2); border-color: #ef4444; color: #ffb3b3; }
-    .badge.warm { background: rgba(245,158,11,0.2); border-color: #f59e0b; color: #ffe6b3; }
-    .badge.cold { background: rgba(59,130,246,0.12); border-color: #3b82f6; color: #b8d0ff; }
+.logo { font-weight:800; font-size:20px; }
 
-    /* HERO */
-    .hero {
-      text-align: center;
-      margin: 2.2rem 0 1.5rem;
-    }
-    .hero h1 {
-      font-size: 3rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      background: linear-gradient(135deg, #ffffff, #a5b4fc, #3b82f6);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-    .hero p {
-      opacity: 0.65;
-      font-size: 1rem;
-      margin-top: 0.6rem;
-    }
+.hero {
+  text-align:center;
+  padding:80px 20px 40px;
+}
 
-    /* KPI GRID */
-    .kpi-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1.2rem;
-      margin: 2rem 0 2rem;
-      justify-content: space-between;
-    }
-    .kpi-card {
-      flex: 1;
-      min-width: 130px;
-      background: rgba(5, 10, 26, 0.65);
-      backdrop-filter: blur(10px);
-      border-radius: 1.8rem;
-      padding: 1.2rem 0.8rem;
-      text-align: center;
-      border: 1px solid rgba(255,255,255,0.08);
-      transition: all 0.2s ease;
-    }
-    .kpi-value {
-      font-size: 2.2rem;
-      font-weight: 800;
-      background: linear-gradient(145deg, #fff, #94a3f8);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-    .progress-container {
-      margin-top: 0.65rem;
-      background: #1e293b;
-      border-radius: 40px;
-      height: 6px;
-      width: 85%;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .progress-fill {
-      background: linear-gradient(90deg, #22c55e, #3b82f6, #a855f7);
-      width: 0%;
-      height: 6px;
-      border-radius: 40px;
-      transition: width 0.3s ease;
-    }
+.hero h1 {
+  font-size:44px;
+  font-weight:800;
+  margin-bottom:10px;
+}
 
-    /* ENGINE CARDS */
-    .card-group {
-      display: flex;
-      flex-direction: column;
-      gap: 1.2rem;
-      margin: 1.8rem 0 1.5rem;
-    }
-    .engine-card {
-      background: rgba(15, 23, 42, 0.7);
-      backdrop-filter: blur(12px);
-      border-radius: 2rem;
-      border: 1px solid rgba(255,255,255,0.08);
-      padding: 1.3rem 1.5rem;
-      transition: all 0.25s;
-    }
-    .card-header {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 8px;
-    }
-    .card-header i {
-      font-size: 1.8rem;
-      color: #3b82f6;
-    }
-    .engine-card h3 {
-      font-weight: 700;
-      font-size: 1.35rem;
-    }
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.6rem;
-      background: #1e293b;
-      padding: 0.7rem 1.3rem;
-      border-radius: 2rem;
-      font-weight: 600;
-      border: none;
-      cursor: pointer;
-      transition: 0.2s;
-      font-size: 0.85rem;
-      color: white;
-    }
-    .btn-primary {
-      background: linear-gradient(105deg, #3b82f6, #2563eb);
-    }
-    .btn-success {
-      background: #22c55e;
-      color: #0a0f2a;
-    }
-    .btn-sm {
-      padding: 0.4rem 1rem;
-      font-size: 0.75rem;
-    }
-    .flex-btns {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
+.hero p {
+  opacity:0.7;
+  font-size:16px;
+}
 
-    /* LOG SECTION */
-    .log-section {
-      background: rgba(0, 0, 0, 0.35);
-      border-radius: 1.5rem;
-      padding: 1rem 1.2rem;
-      margin-top: 1.8rem;
-    }
-    .event-list {
-      max-height: 160px;
-      overflow-y: auto;
-      font-size: 0.75rem;
-      font-family: monospace;
-    }
-    .event-item {
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      padding: 6px 0;
-      display: flex;
-      gap: 12px;
-    }
-    .admin-panel {
-      margin-top: 1.2rem;
-      background: rgba(0,0,0,0.3);
-      border-radius: 1.2rem;
-      padding: 0.8rem 1rem;
-    }
-    hr {
-      border-color: rgba(255,255,255,0.08);
-      margin: 0.8rem 0;
-    }
+.btn {
+  display:inline-block;
+  padding:14px 22px;
+  border-radius:999px;
+  font-weight:700;
+  text-decoration:none;
+  margin:10px;
+}
 
-    /* ========== SECURE PAYWALL (MILITARY GRADE) ========== */
-    .paywall-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle at center, #030617, #000000);
-      backdrop-filter: blur(20px);
-      z-index: 10000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Inter', sans-serif;
-      transition: opacity 0.4s ease;
-    }
-    .paywall-card {
-      background: rgba(10, 20, 40, 0.95);
-      border-radius: 2.5rem;
-      padding: 2.5rem;
-      max-width: 500px;
-      width: 90%;
-      text-align: center;
-      border: 1px solid rgba(59,130,246,0.5);
-      box-shadow: 0 25px 45px rgba(0,0,0,0.6), 0 0 0 1px rgba(59,130,246,0.2);
-      backdrop-filter: blur(8px);
-    }
-    .paywall-card i {
-      font-size: 3.5rem;
-      color: #3b82f6;
-      margin-bottom: 1rem;
-    }
-    .paywall-card h2 {
-      font-size: 1.9rem;
-      font-weight: 800;
-      margin-bottom: 0.5rem;
-    }
-    .paywall-card p {
-      opacity: 0.7;
-      margin-bottom: 1.5rem;
-    }
-    .license-input {
-      background: #0f172a;
-      border: 1px solid #334155;
-      padding: 0.9rem 1rem;
-      width: 100%;
-      border-radius: 2rem;
-      color: white;
-      font-family: monospace;
-      margin-bottom: 1rem;
-      text-align: center;
-      font-size: 1rem;
-    }
-    .stripe-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-top: 8px;
-    }
-    .stripe-btn {
-      background: linear-gradient(95deg, #635bff, #0a2540);
-      width: 100%;
-      padding: 0.85rem;
-      font-weight: bold;
-      border-radius: 40px;
-      gap: 10px;
-    }
-    .stripe-btn i {
-      font-size: 1.2rem;
-      margin: 0;
-    }
-    .demo-key {
-      font-size: 0.7rem;
-      margin-top: 1.2rem;
-      opacity: 0.6;
-      background: #00000040;
-      display: inline-block;
-      padding: 0.3rem 1rem;
-      border-radius: 40px;
-    }
-    .error-msg {
-      color: #f97316;
-      font-size: 0.75rem;
-      margin-top: 8px;
-    }
-    .divider {
-      display: flex;
-      align-items: center;
-      text-align: center;
-      margin: 1.2rem 0;
-      color: #5b6e8c;
-      font-size: 0.7rem;
-    }
-    .divider::before, .divider::after {
-      content: '';
-      flex: 1;
-      border-bottom: 1px solid #334155;
-    }
-    .divider::before { margin-right: 1rem; }
-    .divider::after { margin-left: 1rem; }
-    .main-content {
-      opacity: 0;
-      transition: opacity 0.5s;
-    }
-    .main-content.visible {
-      opacity: 1;
-    }
-    .secure-badge {
-      position: fixed;
-      bottom: 12px;
-      right: 16px;
-      font-size: 0.65rem;
-      background: #00000070;
-      padding: 4px 10px;
-      border-radius: 30px;
-      backdrop-filter: blur(4px);
-      z-index: 99;
-      pointer-events: none;
-    }
-    @media (max-width: 640px) {
-      .hero h1 { font-size: 1.9rem; }
-      .kpi-value { font-size: 1.4rem; }
-      .paywall-card { padding: 1.5rem; }
-    }
-  </style>
+.primary { background:#3b82f6; color:white; }
+.green { background:#22c55e; color:black; }
+
+.section {
+  margin:60px 0;
+}
+
+.grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
+  gap:16px;
+}
+
+.card {
+  background:#0f172a;
+  padding:20px;
+  border-radius:16px;
+  border:1px solid #1f2937;
+}
+
+.highlight {
+  color:#3b82f6;
+  font-weight:700;
+}
+
+.footer {
+  text-align:center;
+  opacity:0.5;
+  font-size:12px;
+  margin:60px 0 20px;
+}
+</style>
 </head>
+
 <body>
 
-<!-- SECURE PAYWALL OVERLAY (MILITARY GRADE) -->
-<div id="paywallOverlay" class="paywall-overlay">
-  <div class="paywall-card">
-    <i class="fas fa-shield-alt"></i>
-    <h2>NorthSky OS · Secure Access</h2>
-    <p>Revenue intelligence suite requires verification.<br>Purchase a license or enter valid key.</p>
-    
-    <!-- Stripe Payment Options (3 links provided) -->
-    <div class="stripe-buttons">
-      <button id="stripePlan1Btn" class="btn stripe-btn"><i class="fab fa-stripe"></i> Buy Access – Standard Plan</button>
-      <button id="stripePlan2Btn" class="btn stripe-btn"><i class="fab fa-stripe"></i> Buy Access – Professional Plan</button>
-      <button id="stripePlan3Btn" class="btn stripe-btn"><i class="fab fa-stripe"></i> Buy Access – Enterprise Plan</button>
-    </div>
-    
-    <div class="divider">OR ENTER LICENSE KEY</div>
-    
-    <input type="password" id="licenseKeyInput" class="license-input" placeholder="License Key (XXXX-XXXX-XXXX)" autocomplete="off">
-    <button id="unlockWithKeyBtn" class="btn pay-btn" style="background: #3b82f6; width:100%;"><i class="fas fa-key"></i> Unlock with Key</button>
-    
-    <div class="demo-key">Demo Key: <strong style="letter-spacing:1px;">NSKY-REV-2025</strong> (for testing)</div>
-    <div id="paywallError" class="error-msg"></div>
-    <div style="font-size:0.65rem; margin-top:12px; opacity:0.4;"><i class="fas fa-lock"></i> 256-bit encrypted session</div>
-  </div>
-</div>
-
-<div class="main-content" id="mainContent">
 <div class="container">
-  <div class="nav">
-    <div class="logo"><i class="fas fa-chart-line"></i> NorthSky OS</div>
-    <div class="badge" id="stageBadge">SECURE</div>
-  </div>
 
-  <div class="hero">
-    <h1>Revenue System Control Hub</h1>
-    <p>unified intelligence · cross-domain lead orchestration · encrypted session</p>
+<!-- NAV -->
+<nav>
+  <div class="logo">NorthSky OS</div>
+  <div>
+    <a href="/pricing" style="color:white; margin-right:15px;">Pricing</a>
+    <a href="/apply" style="color:white;">Apply</a>
   </div>
+</nav>
 
-  <!-- KPI CARDS -->
-  <div class="kpi-grid">
-    <div class="kpi-card"><div class="kpi-label"><i class="fas fa-bolt"></i> USER SCORE</div><div class="kpi-value" id="scoreDisplay">0</div><div class="progress-container"><div class="progress-fill" id="scoreProgress"></div></div></div>
-    <div class="kpi-card"><div class="kpi-label"><i class="fas fa-tachometer-alt"></i> STAGE</div><div class="kpi-value" id="stageDisplay">COLD</div></div>
-    <div class="kpi-card"><div class="kpi-label"><i class="fas fa-dollar-sign"></i> EST. REVENUE</div><div class="kpi-value" id="revenueDisplay">$0</div></div>
-    <div class="kpi-card"><div class="kpi-label"><i class="fas fa-exchange-alt"></i> CONVERSIONS</div><div class="kpi-value" id="convCount">0</div></div>
+<!-- HERO -->
+<section class="hero">
+  <h1>Turn Roofing Traffic Into Revenue</h1>
+  <p>NorthSky OS is a unified ecosystem: leads → inspection → closing automation.</p>
+
+  <a class="btn primary" href="/apply">Apply for Access</a>
+  <a class="btn green" href="/pricing">View Pricing</a>
+</section>
+
+<!-- VALUE PROP -->
+<section class="section">
+  <h2 style="text-align:center;">The 3-System Ecosystem</h2>
+
+  <div class="grid">
+    <div class="card">
+      <h3>1. RoofFlow AI</h3>
+      <p>Captures & qualifies roofing leads automatically.</p>
+    </div>
+
+    <div class="card">
+      <h3>2. Skymaster Drone OS</h3>
+      <p>Turns inspections into high-conversion visual proof.</p>
+    </div>
+
+    <div class="card">
+      <h3>3. Revenue OS</h3>
+      <p>Tracks intent, score, and closes deals faster.</p>
+    </div>
   </div>
+</section>
 
-  <!-- ENGINE CARDS -->
-  <div class="card-group">
-    <div class="engine-card"><div class="card-header"><i class="fas fa-cloud-upload-alt"></i><h3>RoofFlow AI · Lead Engine</h3></div><p>Entry point for all traffic → generates & enriches raw leads</p><div class="flex-btns"><button class="btn btn-primary" id="roofflowBtn"><i class="fas fa-external-link-alt"></i> Open RoofFlow</button></div></div>
-    <div class="engine-card"><div class="card-header"><i class="fas fa-microchip"></i><h3>AI Auditor · Qualification Engine</h3></div><p>Converts traffic into HOT / WARM / COLD leads + behavioral scoring</p><div class="flex-btns"><button class="btn btn-primary" id="auditorBtn"><i class="fas fa-chart-simple"></i> Open Auditor</button></div></div>
-    <div class="engine-card"><div class="card-header"><i class="fas fa-route"></i><h3>Revenue Router · Auto-Pilot</h3></div><p>Automatically pushes high-intent (HOT) users into RoofFlow pipeline</p><div class="flex-btns"><button class="btn btn-success" id="forceRouteBtn"><i class="fas fa-rocket"></i> Force Route HOT Leads</button><button class="btn" id="simulateHighIntentBtn"><i class="fas fa-fire"></i> +30 Intent Boost</button></div></div>
+<!-- PROBLEM -->
+<section class="section">
+  <div class="card">
+    <h2>Why Roofing Businesses Fail to Scale</h2>
+    <p>
+      Most contractors lose revenue because they rely on:
+      <br>• Cold leads with no tracking
+      <br>• Manual follow-up
+      <br>• No visual inspection system
+    </p>
   </div>
+</section>
 
-  <!-- LOG + ADMIN -->
-  <div class="log-section"><div class="log-title"><span><i class="fas fa-history"></i> REVENUE ACTIVITY LOG</span> <button id="clearLogBtn" class="btn-sm" style="background:#334155;">clear</button></div><div class="event-list" id="eventLogContainer">— interactions will appear here —</div></div>
-  <div class="admin-panel"><div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;"><span><i class="fas fa-sliders-h"></i> ADMIN / SCORING CONTROLS</span><div><button id="resetDataBtn" class="btn-sm" style="background:#ef4444;"><i class="fas fa-trash-alt"></i> Reset All Data</button><button id="revokeAccessBtn" class="btn-sm" style="background:#dc2626; margin-left:8px;"><i class="fas fa-lock"></i> Revoke Access</button></div></div><hr><div class="flex-btns"><button id="addPointsBtn" class="btn-sm">+10 points</button><button id="subPointsBtn" class="btn-sm">-5 points</button><button id="simConversionBtn" class="btn-sm" style="background:#f59e0b;"><i class="fas fa-trophy"></i> Simulate Conversion (+$75)</button></div><div style="font-size: 0.7rem; margin-top: 12px; opacity: 0.5;"><i class="fas fa-globe"></i> Cross-domain ready · AES-encrypted session</div></div>
+<!-- SOLUTION -->
+<section class="section">
+  <div class="card">
+    <h2>NorthSky Fixes This</h2>
+    <p>
+      We connect <span class="highlight">traffic → intent → revenue</span> inside one system.
+    </p>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section" style="text-align:center;">
+  <h2>Ready to Join the Ecosystem?</h2>
+  <p>Limited contractor access per region.</p>
+
+  <a class="btn primary" href="/apply">Apply Now</a>
+</section>
+
+<!-- FOOTER -->
+<div class="footer">
+  NorthSky OS · Revenue Infrastructure Layer
 </div>
+
 </div>
-<div class="secure-badge"><i class="fas fa-shield-haltered"></i> FIPS 140-2 Secure Enclave</div>
 
-<script>
-  (function() {
-    // -------------------- SECURITY & ACCESS CONTROL --------------------
-    const SESSION_AUTH_KEY = 'nsky_auth_token';
-    const DEMO_KEY = "NSKY-REV-2025";
-    
-    function isAuthorized() {
-      return sessionStorage.getItem(SESSION_AUTH_KEY) === 'granted';
-    }
-    
-    function grantAccess() {
-      sessionStorage.setItem(SESSION_AUTH_KEY, 'granted');
-      document.getElementById('paywallOverlay').style.display = 'none';
-      document.getElementById('mainContent').classList.add('visible');
-      // log system event
-      addEventLog("🔓 Secure access granted", 0, "License verified");
-    }
-    
-    function revokeAccess() {
-      sessionStorage.removeItem(SESSION_AUTH_KEY);
-      document.getElementById('paywallOverlay').style.display = 'flex';
-      document.getElementById('mainContent').classList.remove('visible');
-      // optional reset of sensitive data? keep local storage but revoke session
-      addEventLog("🔒 Access revoked manually", 0, "Session terminated");
-    }
-    
-    // Check existing session on load
-    if (isAuthorized()) {
-      document.getElementById('paywallOverlay').style.display = 'none';
-      document.getElementById('mainContent').classList.add('visible');
-    } else {
-      document.getElementById('paywallOverlay').style.display = 'flex';
-      document.getElementById('mainContent').classList.remove('visible');
-    }
-    
-    // Unlock with license key
-    document.getElementById('unlockWithKeyBtn').addEventListener('click', function() {
-      const inputKey = document.getElementById('licenseKeyInput').value.trim().toUpperCase();
-      const errorDiv = document.getElementById('paywallError');
-      if (inputKey === DEMO_KEY) {
-        errorDiv.innerText = '';
-        grantAccess();
-      } else {
-        errorDiv.innerText = '❌ Invalid license key. Please check or purchase a valid license.';
-        // security: clear input after failed attempt
-        document.getElementById('licenseKeyInput').value = '';
-      }
-    });
-    
-    // Revoke button inside admin panel
-    document.getElementById('revokeAccessBtn').addEventListener('click', function() {
-      if (confirm('⚠️ Revoking access will lock the dashboard. You will need to re-enter license key. Continue?')) {
-        revokeAccess();
-      }
-    });
-    
-    // -------------------- STRIPE LINKS INTEGRATION (TOP SECURITY) --------------------
-    // The three provided Stripe payment links
-    const STRIPE_LINKS = {
-      plan1: 'https://buy.stripe.com/aFaeV6cX97yIfsjcvu2ZO0E',
-      plan2: 'https://buy.stripe.com/dRm28k8GTaKU1Btcvu2ZO0D',
-      plan3: 'https://buy.stripe.com/dRmfZae1d2eoeofgLK2ZO0C'
-    };
-    
-    function openStripeCheckout(url) {
-      // Open Stripe in a new tab, secure and no referrer leak
-      window.open(url, '_blank', 'noopener,noreferrer');
-      // Show helpful message that after purchase user receives a license key
-      alert('✅ Stripe checkout opened. After successful payment, you will receive a license key via email. Enter that key in the paywall to unlock NorthSky OS.');
-    }
-    
-    document.getElementById('stripePlan1Btn').addEventListener('click', () => openStripeCheckout(STRIPE_LINKS.plan1));
-    document.getElementById('stripePlan2Btn').addEventListener('click', () => openStripeCheckout(STRIPE_LINKS.plan2));
-    document.getElementById('stripePlan3Btn').addEventListener('click', () => openStripeCheckout(STRIPE_LINKS.plan3));
-    
-    // -------------------- REVENUE ENGINE LOGIC (unchanged but secure) --------------------
-    const STORAGE_KEYS = {
-      USER_ID: "ns_user_id",
-      SCORE: "ns_score",
-      REVENUE: "ns_revenue",
-      CONVERSIONS: "ns_conversions",
-      EVENT_LOG: "ns_event_log"
-    };
-
-    function getUserId() {
-      let id = localStorage.getItem(STORAGE_KEYS.USER_ID);
-      if (!id) {
-        id = crypto.randomUUID ? crypto.randomUUID() : 'id-' + Date.now() + '-' + Math.random().toString(36);
-        localStorage.setItem(STORAGE_KEYS.USER_ID, id);
-      }
-      return id;
-    }
-
-    function getScore() {
-      let val = parseInt(localStorage.getItem(STORAGE_KEYS.SCORE) || "0");
-      return isNaN(val) ? 0 : Math.min(100, Math.max(0, val));
-    }
-    function setScore(newScore) {
-      let bounded = Math.min(100, Math.max(0, newScore));
-      localStorage.setItem(STORAGE_KEYS.SCORE, bounded);
-      return bounded;
-    }
-    function addScore(delta) {
-      let current = getScore();
-      let updated = current + delta;
-      return setScore(updated);
-    }
-
-    function getRevenue() {
-      let rev = parseInt(localStorage.getItem(STORAGE_KEYS.REVENUE) || "0");
-      return isNaN(rev) ? 0 : rev;
-    }
-    function addRevenue(amount) {
-      let current = getRevenue();
-      let newRev = current + amount;
-      localStorage.setItem(STORAGE_KEYS.REVENUE, newRev);
-      return newRev;
-    }
-    function getConversions() {
-      let conv = parseInt(localStorage.getItem(STORAGE_KEYS.CONVERSIONS) || "0");
-      return isNaN(conv) ? 0 : conv;
-    }
-    function addConversion(amount = 1) {
-      let curr = getConversions();
-      let newConv = curr + amount;
-      localStorage.setItem(STORAGE_KEYS.CONVERSIONS, newConv);
-      return newConv;
-    }
-
-    function getEventLog() {
-      let logs = localStorage.getItem(STORAGE_KEYS.EVENT_LOG);
-      if (!logs) return [];
-      try { return JSON.parse(logs); } catch(e) { return []; }
-    }
-    function addEventLog(action, deltaScore = 0, extra = "") {
-      if (!isAuthorized()) return; // no logging when locked
-      let logs = getEventLog();
-      let newEntry = { ts: new Date().toLocaleTimeString(), action: action, delta: deltaScore, extra: extra, scoreAfter: getScore() };
-      logs.unshift(newEntry);
-      if (logs.length > 28) logs.pop();
-      localStorage.setItem(STORAGE_KEYS.EVENT_LOG, JSON.stringify(logs));
-      renderEventLog();
-    }
-    function clearEventLog() {
-      localStorage.setItem(STORAGE_KEYS.EVENT_LOG, JSON.stringify([]));
-      renderEventLog();
-      addEventLog("🗑️ Log cleared", 0, "manual reset");
-    }
-
-    function getStage(score = null) {
-      let s = (score === null) ? getScore() : score;
-      if (s >= 80) return "HOT";
-      if (s >= 40) return "WARM";
-      return "COLD";
-    }
-
-    function executeRoute() {
-      if (!isAuthorized()) return;
-      let score = getScore();
-      if (score >= 80) {
-        addEventLog("🚀 Force Route triggered (HOT)", 0, `score=${score}`);
-        let newRevenue = addRevenue(50);
-        let newConv = addConversion(1);
-        addEventLog("💰 CONVERSION: HOT lead routed → +$50 revenue", 0, `total $${newRevenue}`);
-        updateUI();
-        redirectWithParams("https://goldylox752.github.io/RoofFlow-AI/");
-      } else {
-        let need = 80 - score;
-        addEventLog("⚠️ Route blocked", 0, `need ${need} more points`);
-        showToast(`❌ NOT HOT YET (score ${score}) · need ${need} more intent`, 2500);
-        updateUI();
-      }
-    }
-
-    function redirectWithParams(baseUrl) {
-      const uid = getUserId();
-      const currentScore = getScore();
-      const separator = baseUrl.includes('?') ? '&' : '?';
-      const url = `${baseUrl}${separator}ns_user=${encodeURIComponent(uid)}&ns_score=${currentScore}&ref=NorthSkyOS`;
-      window.location.href = url;
-    }
-
-    function handleEngineClick(source, targetUrl) {
-      if (!isAuthorized()) return;
-      let oldScore = getScore();
-      let newScore = addScore(5);
-      addEventLog(`🔗 ${source} click`, 5, `score ${oldScore} → ${newScore}`);
-      updateUI();
-      showToast(`+5 intent · ${source} engaged`, 1200);
-      setTimeout(() => { redirectWithParams(targetUrl); }, 50);
-    }
-
-    function boostIntent() {
-      if (!isAuthorized()) return;
-      let before = getScore();
-      let afterVal = addScore(30);
-      let actualGain = afterVal - before;
-      addEventLog("⚡ Intent Boost (manual)", actualGain, `new score ${afterVal}`);
-      updateUI();
-      showToast(`🔥 +${actualGain} intent points!`, 1800);
-      if (afterVal >= 80) showToast("🎯 STAGE UPGRADE: HOT lead — ready for routing!", 2000);
-    }
-
-    function adminAddPoints(amount) {
-      if (!isAuthorized()) return;
-      let oldScore = getScore();
-      let newScore = addScore(amount);
-      addEventLog(`🛠️ Admin ${amount>=0 ? '+' : ''}${amount} points`, amount, `${oldScore} → ${newScore}`);
-      updateUI();
-      showToast(`${amount>=0 ? '+' : ''}${amount} points`, 1000);
-    }
-
-    function simulateConversionDemo() {
-      if (!isAuthorized()) return;
-      let revAdded = 75;
-      addRevenue(revAdded);
-      addConversion(1);
-      addEventLog("💎 Demo conversion (manual)", 0, `+$${revAdded} revenue`);
-      updateUI();
-      showToast(`✨ +$${revAdded} simulated revenue`, 1500);
-    }
-
-    function fullReset() {
-      if (!isAuthorized()) return;
-      if (confirm("⚠️ RESET ALL DATA: score, revenue, logs, conversions. This cannot be undone. Continue?")) {
-        localStorage.setItem(STORAGE_KEYS.SCORE, "0");
-        localStorage.setItem(STORAGE_KEYS.REVENUE, "0");
-        localStorage.setItem(STORAGE_KEYS.CONVERSIONS, "0");
-        localStorage.setItem(STORAGE_KEYS.EVENT_LOG, JSON.stringify([]));
-        addEventLog("🔄 Full system reset", 0, "dashboard initialized");
-        updateUI();
-        showToast("All data reset to factory state", 2000);
-      }
-    }
-
-    function updateUI() {
-      const score = getScore();
-      const stage = getStage(score);
-      const revenue = getRevenue();
-      const conversions = getConversions();
-      document.getElementById("scoreDisplay").innerText = score;
-      document.getElementById("stageDisplay").innerText = stage;
-      document.getElementById("revenueDisplay").innerHTML = `$${revenue}`;
-      document.getElementById("convCount").innerText = conversions;
-      const progressFill = document.getElementById("scoreProgress");
-      if (progressFill) progressFill.style.width = `${(score / 100) * 100}%`;
-      const badgeEl = document.getElementById("stageBadge");
-      badgeEl.innerText = `${stage} TRAFFIC`;
-      badgeEl.className = "badge";
-      if (stage === "HOT") badgeEl.classList.add("hot");
-      else if (stage === "WARM") badgeEl.classList.add("warm");
-      else badgeEl.classList.add("cold");
-    }
-
-    function renderEventLog() {
-      const container = document.getElementById("eventLogContainer");
-      if (!container) return;
-      const logs = getEventLog();
-      if (logs.length === 0) { container.innerHTML = `<div style="opacity:0.6; text-align:center;">✨ no events yet — click any engine</div>`; return; }
-      container.innerHTML = logs.map(log => `<div class="event-item"><span class="timestamp">${log.ts}</span><span style="flex:1;"><strong>${log.action}</strong> ${log.delta !== 0 ? `(${log.delta>0 ? '+' : ''}${log.delta})` : ''} ${log.extra ? `— ${log.extra}` : ''}</span></div>`).join('');
-    }
-
-    function showToast(msg, duration = 1800) {
-      let existingToast = document.getElementById("dynamicToast");
-      if (existingToast) existingToast.remove();
-      let toast = document.createElement("div");
-      toast.id = "dynamicToast";
-      toast.innerText = msg;
-      toast.style.position = "fixed";
-      toast.style.bottom = "24px";
-      toast.style.left = "50%";
-      toast.style.transform = "translateX(-50%)";
-      toast.style.background = "#1e293bb3";
-      toast.style.backdropFilter = "blur(12px)";
-      toast.style.color = "white";
-      toast.style.padding = "10px 20px";
-      toast.style.borderRadius = "40px";
-      toast.style.fontSize = "0.85rem";
-      toast.style.fontWeight = "500";
-      toast.style.border = "1px solid rgba(255,255,255,0.2)";
-      toast.style.zIndex = "9999";
-      toast.style.whiteSpace = "nowrap";
-      document.body.appendChild(toast);
-      setTimeout(() => { if(toast) toast.remove(); }, duration);
-    }
-
-    function syncFromUrlParams() {
-      const urlParams = new URLSearchParams(window.location.search);
-      let incomingScore = urlParams.get('ns_score');
-      let incomingUser = urlParams.get('ns_user');
-      if (incomingUser) localStorage.setItem(STORAGE_KEYS.USER_ID, incomingUser);
-      if (incomingScore !== null) {
-        let parsed = parseInt(incomingScore);
-        if (!isNaN(parsed)) {
-          let current = getScore();
-          let finalScore = Math.max(current, Math.min(100, parsed));
-          if (finalScore !== current) setScore(finalScore);
-        }
-      }
-      const cleanUrl = window.location.pathname;
-      window.history.replaceState({}, document.title, cleanUrl);
-      updateUI();
-    }
-
-    let decayInterval = null;
-    function startDecaySystem() {
-      if (decayInterval) clearInterval(decayInterval);
-      decayInterval = setInterval(() => {
-        if (!isAuthorized()) return;
-        let current = getScore();
-        if (current > 0) {
-          let newScore = setScore(current - 1);
-          if (newScore !== current) { addEventLog("⏳ Score decay (time)", -1, `now ${newScore}`); updateUI(); }
-        }
-      }, 45000);
-    }
-
-    function bindEvents() {
-      document.getElementById("roofflowBtn").addEventListener("click", () => handleEngineClick("RoofFlow AI", "https://goldylox752.github.io/RoofFlow-AI/"));
-      document.getElementById("auditorBtn").addEventListener("click", () => handleEngineClick("AI Auditor", "https://north-sky-ai.vercel.app/"));
-      document.getElementById("forceRouteBtn").addEventListener("click", () => executeRoute());
-      document.getElementById("simulateHighIntentBtn").addEventListener("click", () => boostIntent());
-      document.getElementById("resetDataBtn").addEventListener("click", () => fullReset());
-      document.getElementById("addPointsBtn").addEventListener("click", () => adminAddPoints(10));
-      document.getElementById("subPointsBtn").addEventListener("click", () => adminAddPoints(-5));
-      document.getElementById("simConversionBtn").addEventListener("click", () => simulateConversionDemo());
-      document.getElementById("clearLogBtn").addEventListener("click", () => clearEventLog());
-    }
-
-    function init() {
-      bindEvents();
-      syncFromUrlParams();
-      updateUI();
-      renderEventLog();
-      startDecaySystem();
-      setInterval(() => { if(isAuthorized()) { updateUI(); renderEventLog(); } }, 1000);
-    }
-    init();
-  })();
-</script>
 </body>
 </html>
